@@ -135,7 +135,7 @@
 <html>
     <?php include('templates/header.php') ?>
         <section class="container grey-text">
-            <h4 class="center">Register School</h4>
+            <h4 class="center">Register Student</h4>
             <a href="register_sch.php" class="btn brand z-depth-0">Register School</a>
             <form class="white" action="register.php" method="POST">
 
