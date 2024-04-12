@@ -1,4 +1,5 @@
 <?php 
+    session_start();
     include('config/db_connect.php');
 
     //write query for all universities
@@ -12,13 +13,14 @@
 
 
     $errors = array('name'=>'', 'mem1'=>'', 'mem2'=>'', 'mem3'=>'', 'mem4'=>'', 'mem5'=>'');
+    $mem = array('', '', '', '', '');
     $name = '';
-    $mem = array($_POST['mem1'], $_POST['mem2'], $_POST['mem3'], $_POST['mem4'], $_POST['mem5']);
     $memID = [];
     
 
     if(isset($_POST['submit']))
     {
+        $mem = array($_POST['mem1'], $_POST['mem2'], $_POST['mem3'], $_POST['mem4'], $_POST['mem5']);
 
         //name check
         if(empty($_POST['name']))
@@ -56,24 +58,27 @@
         $counter = 1;
         $tempuni = mysqli_real_escape_string($conn, $_SESSION['UnivID']);
 
-        foreach($mem as $m)
+        if(!in_array("", $mem))
         {
-            $temp = mysqli_real_escape_string($conn, $m);
-
-            $sql = "SELECT UserID FROM users WHERE email = '$temp' and UnivID = '$tempuni'";
-            $result = mysqli_query($conn, $sql);
-
-            if(mysqli_num_rows($result) === 1)
+            foreach($mem as $m)
             {
-                $tempID = mysqli_fetch_assoc($result);
-                array_push($memID, $tempID);
-            }
-            else
-            {
-                $errors['mem' . $counter] = 'Email must belong to a studnet from your school.<br />';
-            }
+                $temp = mysqli_real_escape_string($conn, $m);
 
-            $counter++;
+                $sql = "SELECT UserID FROM users WHERE email = '$temp' and UnivID = '$tempuni'";
+                $result = mysqli_query($conn, $sql);
+
+                if(mysqli_num_rows($result) === 1)
+                {
+                    $tempID = mysqli_fetch_assoc($result);
+                    array_push($memID, $tempID['UserID']);
+                }
+                else
+                {
+                    $errors['mem' . $counter] = 'Email must belong to a studnet from your school.<br />';
+                }
+
+                $counter++;
+            }
         }
 
         if(!array_filter($errors)) //empty string returns false, so if theres no errors it will return false. If any string in the array is non empty it'll return true
@@ -83,31 +88,47 @@
             $adminID = mysqli_real_escape_string($conn, $_SESSION['UserID']);
             $rsoName = mysqli_real_escape_string($conn, $_POST['name']);
 
-            $sql = "INSERT INTO rso(univID, adminID, rsoName) VALUES('$rsoName', '$adminID', '$rsoName')";
+            $sql = "INSERT INTO rso(univID, adminID, rsoName) VALUES('$univID', '$adminID', '$rsoName')";
 
             if(mysqli_query($conn, $sql))
             {
                 //success
                 $rsoID = mysqli_insert_id($conn);
+
+                $sql = "UPDATE users SET isAdmin = 1 WHERE UserID = '$adminID';";
+                if(!mysqli_query($conn, $sql))
+                {
+                    echo 'query error: '.mysqli_error($conn);
+                }
+
+                $_SESSION['isAdmin'] = 1;
             }
             else
             {
                 echo 'query error: '.mysqli_error($conn);
             }
 
+            $counter = 0;
             foreach($memID as $mi)
             {
                 $userID_ = mysqli_real_escape_string($conn, $mi);
 
-                $sql = "INSERT INTO rso_users(rsoID, userID) VALUES('$userID_', '$rsoID')";
+                $sql = "INSERT INTO rso_users(rsoID, userID) VALUES('$rsoID', '$userID_')";
 
                 if(!mysqli_query($conn, $sql))
                 {
                     echo 'query error: '.mysqli_error($conn);
 
                 }
+                else
+                {
+                    $counter++;
+                }
             }
-
+            if($counter >= 4)
+            {
+                header('Location: index.php');
+            }
             
         }
 
@@ -122,7 +143,16 @@
 ?>
 <!DOCTYPE html>
 <html>
-    <?php include('templates/header.php') ?>
+    <?php 
+        if(isset($_SESSION['UserID']) || isset($_SESSION['saID']))
+        {
+            include('templates/header_log.php');
+        }
+        else
+        {
+            include('templates/header.php');
+        }
+    ?>
         <section class="container grey-text">
             <h4 class="center">Register RSO</h4>
             <form class="white" action="rso.php" method="POST">
