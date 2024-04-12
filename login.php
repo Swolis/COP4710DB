@@ -1,4 +1,6 @@
 <?php 
+    session_start();
+    
     include('config/db_connect.php');
 
     $errors = array('email'=>'', 'pass'=>'', 'login'=>'');
