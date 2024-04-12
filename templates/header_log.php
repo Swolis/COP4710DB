@@ -1,4 +1,5 @@
-<?php ?>
+<?php 
+?>
 <head>
     <title>Busy Uni</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -25,7 +26,12 @@
         <div class="container">
             <a href="index.php" class="brand-logo brand-text">Home</a>
             <ul id="nav-mobile" class="right hide-on-small-and-down">
-                <li><a href="event.php" class="btn brand z-depth-0">Create Event</a></li>
+                <?php if(isset($_SESSION['UserID'])){?>
+                    <li><a href="rso.php" class="btn brand z-depth-0">Create RSO</a></li>
+                    <li><a href="event.php" class="btn brand z-depth-0">Create Event</a></li>
+                <?php } else if(isset($_SESSION['saID'])){?>
+                    <li><a href="eventsa.php" class="btn brand z-depth-0">Create Event</a></li>
+                <?php } ?>
                 <li><a href="logout.php" class="btn brand z-depth-0">Logout</a></li>
             </ul>
         </div>
