@@ -1,7 +1,7 @@
     <footer class="section">
         <div class="center grey-text"></div>
     </footer>
-</body>
+<body>
 <div style="text-align: center;">
         <ul style="list-style-type: none; display: inline;">
             <li style="display: inline;"><a href="https://www.facebook.com"><img src="https://img.icons8.com/color/48/000000/facebook-new.png" alt="Facebook"> Facebook</a></li>
@@ -12,3 +12,4 @@
             <!-- Add more social media links as needed -->
         </ul>
     </div>
+</body>
