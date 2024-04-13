@@ -62,6 +62,13 @@
 		$result = mysqli_query($conn, $sql);
 		$loc = mysqli_fetch_assoc($result);
 
+
+        // get comments
+		$sql = "SELECT * FROM comments WHERE EventID = $id";
+		$result = mysqli_query($conn, $sql);
+		$com = mysqli_fetch_assoc($result);
+        
+
         $adminID = $event['adminID'];
 
         $sql = "SELECT UserID, phoneNum FROM users WHERE UserID = $adminID";
@@ -123,6 +130,22 @@
                     <input type="submit" name="delete" value="Delete" class="btn brand z-depth-0">
                     </form>
                 <?php }?>
+
+            <div class="row">
+                <?php foreach($com as $c){ ?>
+                    <div>
+                        <div class="card z-depth-0">
+                            <div class="card-content center">
+                                <ul class="grey-text">
+                                        <li><?php echo htmlspecialchars($c['theComment']); ?></li>
+                                        <li><?php echo htmlspecialchars($c['tstamp']); ?></li>
+                                        <li><?php echo htmlspecialchars($c['rating']); ?></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
+            </div>
 
 		<?php } else { ?>
 			<h5>No such event exists.</h5>

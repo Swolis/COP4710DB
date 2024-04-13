@@ -148,7 +148,7 @@
 
             if(isset($_POST['isPrivate']))
             {
-                $sql = "INSERT INTO events(isPrivate, LocID, eventTime, dat, description, adminID, adminPhone) VALUES('1', '$RsoID', '$LocID', '$eTime', '$dat', '$description', '$adminID', '$adminPhone')";
+                $sql = "INSERT INTO events(isPrivate, LocID, eventTime, dat, description, adminID, adminPhone) VALUES('1', '$LocID', '$eTime', '$dat', '$description', '$adminID', '$adminPhone')";
             }
 
             if(isset($_POST['isRSO']))
