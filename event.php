@@ -110,18 +110,33 @@
             $latitude = mysqli_real_escape_string($conn, $_POST['latitude']);
 
             //insert locations
-            $sql = "INSERT INTO locations(name, description, longitude, latitude) VALUES('$straddr', '$desL', '$longitude', '$latitude')";
-            
-            //save to db and check
-            if(mysqli_query($conn, $sql))
+
+            $sql = "SELECT * FROM locations WHERE latitude = $latitude AND longitude = $longitude" ; 
+            $result = mysqli_query($conn, $sql);
+
+            // If we do not have this combination of latitude and longitude
+            if ($result && mysqli_num_rows($result) <= 0) 
             {
-                //success
-                $LocID = mysqli_insert_id($conn);
+                $sql = "INSERT INTO locations(name, description, longitude, latitude) VALUES('$straddr', '$desL', '$longitude', '$latitude')";
+
+                            //save to db and check
+                if(mysqli_query($conn, $sql))
+                {
+                    //success
+                    $LocID = mysqli_insert_id($conn);
+                }
+                else
+                {
+                    echo 'query error: '.mysqli_error($conn);
+                }
             }
-            else
+            else 
             {
-                echo 'query error: '.mysqli_error($conn);
+                // If location is found, we extract the LocId
+                $row = mysqli_fetch_assoc($result);
+                $LocID = $row['LocID'];
             }
+
 
 
             // create sql
@@ -129,7 +144,7 @@
 
             if(isset($_POST['isPrivate']))
             {
-                $sql = "INSERT INTO events(isPrivate, LocID, eventTime, dat, description, adminID, adminPhone) VALUES('1', '$RsoID', '$LocID', '$eTime', '$dat', '$description', '$adminID', '$adminPhone')";
+                $sql = "INSERT INTO events(isPrivate, LocID, eventTime, dat, description, adminID, adminPhone) VALUES('1', '$LocID', '$eTime', '$dat', '$description', '$adminID', '$adminPhone')";
             }
 
             if(isset($_POST['isRSO']))
@@ -137,22 +152,30 @@
                 $sql = "INSERT INTO events(rso_exclusive, RsoID, LocID, eventTime, dat, description, adminID, adminPhone) VALUES('1', '$RsoID', '$LocID', '$eTime', '$dat', '$description', '$adminID', '$adminPhone')";
             }
 
-            //save to db and check
-            if(mysqli_query($conn, $sql))
+            try
             {
-                //success
-                //free result
-                mysqli_free_result($result);
+                //save to db and check
+                if(mysqli_query($conn, $sql))
+                {
+                    //success
+                    //free result
+                    mysqli_free_result($result);
 
-                //close connection
-                mysqli_close($conn);
+                    //close connection
+                    mysqli_close($conn);
 
-                header('Location: index.php');
+                    header('Location: index.php');
+                }
+                else
+                {
+                    echo 'query error: '.mysqli_error($conn);
+                }
             }
-            else
+            catch(mysqli_sql_exception $e)
             {
-                echo 'query error: '.mysqli_error($conn);
+                echo'Query Error: '.mysqli_error($conn);
             }
+            
         }
 
         //end of POST check
