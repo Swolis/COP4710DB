@@ -113,7 +113,7 @@
             {
                 $userID_ = mysqli_real_escape_string($conn, $mi);
 
-                $sql = "INSERT INTO rso_users(rsoID, userID) VALUES('$rsoID', '$userID_')";
+                $sql = "INSERT INTO rso_users(rsoID, userID) VALUES('$rsoID', '$adminID')";
 
                 if(!mysqli_query($conn, $sql))
                 {
@@ -124,6 +124,13 @@
                 {
                     $counter++;
                 }
+            }
+            $sql = "INSERT INTO rso_users(rsoID, userID) VALUES('$rsoID', '$userID_')";
+
+            if(!mysqli_query($conn, $sql))
+            {
+                echo 'query error: '.mysqli_error($conn);
+
             }
             if($counter >= 4)
             {
