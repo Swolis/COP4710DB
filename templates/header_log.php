@@ -29,6 +29,7 @@
                 <?php if(isset($_SESSION['UserID'])){?>
                     <li><a href="rso.php" class="btn brand z-depth-0">Create RSO</a></li>
                     <li><a href="event.php" class="btn brand z-depth-0">Create Event</a></li>
+                    <li><a href="comments.php" class="btn brand z-depth-0">Create Comment</a></li>
                 <?php } else if(isset($_SESSION['saID'])){?>
                     <li><a href="eventsa.php" class="btn brand z-depth-0">Create Event</a></li>
                 <?php } ?>
