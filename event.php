@@ -10,7 +10,7 @@
 
     $rsos = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-    $errors = array('eTime'=>'', 'date'=>'', 'desc'=>'', 'straddr'=>'', 'long'=>'', 'lat'=>'', 'desL'=>'');
+    $errors = array('rsochk'=>'', 'eTime'=>'', 'date'=>'', 'desc'=>'', 'straddr'=>'', 'long'=>'', 'lat'=>'', 'desL'=>'');
     $eTime = '';
     $date = '';
     $desc = '';
@@ -90,6 +90,11 @@
             $latitude = mysqli_real_escape_string($conn, $_POST['latitude']);
         }
 
+        if(empty($_POST['RSOchc']) && $_POST['isRSO'])
+        {
+            $errors['rsochk'] = 'RSO is required for RSO event<br />';
+        }
+
         if(!array_filter($errors)) //empty string returns false, so if theres no errors it will return false. If any string in the array is non empty it'll return true
         {
             $RsoID = mysqli_real_escape_string($conn, $_POST['RSOchc']); //protects from sql injection, escape malicous or sensitive sql characters
@@ -120,11 +125,16 @@
 
 
             // create sql
-            $sql = "INSERT INTO events(RsoID, LocID, eventTime, dat, description, adminID, adminPhone) VALUES('$RsoID', '$LocID', '$eTime', '$dat', '$description', '$adminID', '$adminPhone')";
+            $sql = "INSERT INTO events(LocID, eventTime, dat, description, adminID, adminPhone) VALUES('$LocID', '$eTime', '$dat', '$description', '$adminID', '$adminPhone')";
 
             if(isset($_POST['isPrivate']))
             {
-                $sql = "INSERT INTO events(isPrivate, RsoID, LocID, eventTime, dat, description, adminID, adminPhone) VALUES('1', '$RsoID', '$LocID', '$eTime', '$dat', '$description', '$adminID', '$adminPhone')";
+                $sql = "INSERT INTO events(isPrivate, LocID, eventTime, dat, description, adminID, adminPhone) VALUES('1', '$RsoID', '$LocID', '$eTime', '$dat', '$description', '$adminID', '$adminPhone')";
+            }
+
+            if(isset($_POST['isRSO']))
+            {
+                $sql = "INSERT INTO events(rso_exclusive, RsoID, LocID, eventTime, dat, description, adminID, adminPhone) VALUES('1', '$RsoID', '$LocID', '$eTime', '$dat', '$description', '$adminID', '$adminPhone')";
             }
 
             //save to db and check
@@ -159,15 +169,6 @@
             <h4 class="center">Create Event</h4>
             <form class="white" action="event.php" method="POST">
 
-                <label>RSO:</label>
-                <div class="input-field col s12">
-                    <select class="browser-default" name="RSOchc">
-                        <?php foreach($rsos as $r){ ?>
-                            <option value="<?php echo $r['RsoID'] ?>"><?php echo $r['rsoName'] ?></option>
-                        <?php } ?>
-                    </select>
-                </div>
-
                 <label>Event Time:</label>
                 <input type="Time" name="eTime" value="">
                 <div class="red-text"><?php echo $errors['eTime'] ?></div>
@@ -200,6 +201,40 @@
                     <input type="checkbox" class="filled-in" name="isPrivate" value="Yes"/>
                     <span>Private Event</span>
                 </label>
+
+                <?php 
+                    
+                ?>
+                <label>
+                    <input type="checkbox" class="filled-in" id="rsoCheck" name="isRSO" value="Yes"/>
+                    <span>RSO Event</span>
+                </label>
+                <div class="red-text"><?php echo $errors['rsochk'] ?></div>
+
+                <fieldset id="rsoField">
+                    <label>RSO:</label>
+                    <div class="input-field col s12">
+                        <select class="browser-default" name="RSOchc">
+                            <option value=""></option>
+                            <?php foreach($rsos as $r){ ?>
+                                <option value="<?php echo $r['RsoID'] ?>"><?php echo $r['rsoName'] ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                </fieldset>
+
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+                <script>
+                    $("#rsoField").hide();
+                    $('input[type="checkbox"]'). click(function(){
+                    if(document.getElementById("rsoCheck").checked){
+                        $("#rsoField").show();
+                    }else{
+                        $("#rsoField").hide();
+                        }
+                    
+                    });
+                </script>
 
                 <div class="center">
                     <input type="submit" name="submit" value="submit" class="btn brand z-depth-0">
