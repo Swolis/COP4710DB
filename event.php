@@ -117,7 +117,6 @@
             // If we do not have this combination of latitude and longitude
             if ($result && mysqli_num_rows($result) <= 0) 
             {
-
                 $sql = "INSERT INTO locations(name, description, longitude, latitude) VALUES('$straddr', '$desL', '$longitude', '$latitude')";
 
                             //save to db and check
