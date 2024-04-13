@@ -7,54 +7,54 @@
     {
 
 
-            $eventID = mysqli_real_escape_string($conn, $_POST['eventID']);
-            $rating = mysqli_real_escape_string($conn, $_POST['rating']);
-            $newComment = mysqli_real_escape_string($conn, $_POST['newComment']);
+        $eventID = mysqli_real_escape_string($conn, $_POST['eventID']);
+        $rating = mysqli_real_escape_string($conn, $_POST['rating']);
+        $newComment = mysqli_real_escape_string($conn, $_POST['newComment']);
 
 
-            // Ladder to determine which of the buttons was pressed and load up the appropriate query
-            if ($flag==1)
-            {
+        // Ladder to determine which of the buttons was pressed and load up the appropriate query
+        if ($flag==1)
+        {
 
-                $sql = "INSERT INTO comments (EventID, tstamp, rating, UserID, theComment) 
-                VALUES ('$eventID', current_timestamp(), '$rating', '$currentUserID', '$newComment')";
-            }
-            else if ($flag==2)
-            {
+            $sql = "INSERT INTO comments (EventID, tstamp, rating, UserID, theComment) 
+            VALUES ('$eventID', current_timestamp(), '$rating', '$currentUserID', '$newComment')";
+        }
+        else if ($flag==2)
+        {
 
-                $sql = "UPDATE comments SET tstamp=CURRENT_TIMESTAMP(), theComment = '$newComment', 
-                rating = '$rating' WHERE EventID = '$eventID' AND userID = '$currentUserID'";
-            }
-            else if ($flag==3)
-            {            
-                $sql = "DELETE FROM comments WHERE  userID = '$currentUserID' AND eventID = '$eventID'";
-            }
+            $sql = "UPDATE comments SET tstamp=CURRENT_TIMESTAMP(), theComment = '$newComment', 
+            rating = '$rating' WHERE EventID = '$eventID' AND userID = '$currentUserID'";
+        }
+        else if ($flag==3)
+        {            
+            $sql = "DELETE FROM comments WHERE  userID = '$currentUserID' AND eventID = '$eventID'";
+        }
 
-            // Used to catch various exceptions, like the Trigger for duplicate events
-            try
-            {
+        // Used to catch various exceptions, like the Trigger for duplicate events
+        try
+        {
 
-            // Actually sends the query, once we have loaded the appropriate statement
-            if(mysqli_query($conn, $sql))
-            {
-                // Enter here if the query is a success, and the database is updated!
+        // Actually sends the query, once we have loaded the appropriate statement
+        if(mysqli_query($conn, $sql))
+        {
+            // Enter here if the query is a success, and the database is updated!
 
-            }
-            else 
-            {
-                // Enter here if there was some sort of error with the query, posts error.
-                echo 'query error: '.mysqli_error($conn);
-            }
-            }
-            catch (Exception)
-            {
-                $flag==4;
-            }
+        }
+        else 
+        {
+            // Enter here if there was some sort of error with the query, posts error.
+            echo 'query error: '.mysqli_error($conn);
+        }
+        }
+        catch (Exception)
+        {
+            $flag==4;
+        }
 
 
         // End Empty Check Block
-    mysqli_close($conn);
-    header('Location: comments.php');
+        mysqli_close($conn);
+        header('Location: comments.php');
     }
 
     $eventID = '';
