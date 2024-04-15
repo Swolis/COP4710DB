@@ -8,25 +8,36 @@
         $LocIDDel = mysqli_real_escape_string($conn, $_POST['LocIDDel']);
 
 		// check how many events share loc
-		$sql = "SELECT * FROM events WHERE LocID = $LocIDDel";
+		$sql = "SELECT * FROM events WHERE LocID = '$LocIDDel'";
 		$result = mysqli_query($conn, $sql);
         $first = mysqli_num_rows($result);
 
         //check if univ use loc
-        $sql = "SELECT * FROM universities WHERE LocID = $LocIDDel";
+        $sql = "SELECT * FROM universities WHERE LocID = '$LocIDDel'";
 		$result = mysqli_query($conn, $sql);
         $second = mysqli_num_rows($result);
 
+        //delete comments
+        //get number of comments
+        $sql = "DELETE FROM comments WHERE EventID = '$id'";
+        if(mysqli_query($conn, $sql))
+        {
+            //success
+        }
+        else
+        {
+            echo 'query error: '. mysqli_error($conn);
+        }
 
 		$id_to_delete = mysqli_real_escape_string($conn, $_POST['id_to_delete']);
 
-		$sql = "DELETE FROM events WHERE EventID = $id_to_delete";
+		$sql = "DELETE FROM events WHERE EventID = '$id_to_delete'";
 
 		if(mysqli_query($conn, $sql))
         {
             if($first === 1 && $second ===0)
             {
-                $sql = "DELETE FROM locations WHERE LocID = $LocIDDel";
+                $sql = "DELETE FROM locations WHERE LocID = '$LocIDDel'";
                 if(!mysqli_query($conn, $sql))
                 {
                     echo 'query error: '. mysqli_error($conn);
@@ -47,7 +58,7 @@
 		$id = mysqli_real_escape_string($conn, $_GET['id']);
 
 		// make sql
-		$sql = "SELECT * FROM events WHERE EventID = $id";
+		$sql = "SELECT * FROM events WHERE EventID = '$id'";
 
 		// get the query result
 		$result = mysqli_query($conn, $sql);
@@ -58,20 +69,20 @@
         $LocID = $event['LocID'];
 
         // get location
-		$sql = "SELECT * FROM locations WHERE LocID = $LocID";
+		$sql = "SELECT * FROM locations WHERE LocID = '$LocID'";
 		$result = mysqli_query($conn, $sql);
 		$loc = mysqli_fetch_assoc($result);
 
 
         // get comments
-		$sql = "SELECT * FROM comments WHERE EventID = $id";
+		$sql = "SELECT * FROM comments WHERE EventID = '$id'";
 		$result = mysqli_query($conn, $sql);
-		$com = mysqli_fetch_assoc($result);
+		$com = mysqli_fetch_all($result, MYSQLI_ASSOC);
         
 
         $adminID = $event['adminID'];
 
-        $sql = "SELECT UserID, phoneNum FROM users WHERE UserID = $adminID";
+        $sql = "SELECT UserID, phoneNum FROM users WHERE UserID = '$adminID'";
         $result = mysqli_query($conn, $sql);
         $admin = mysqli_fetch_assoc($result);
 
@@ -122,14 +133,21 @@
 
 
 			<!-- DELETE FORM -->
-            <?php $uid = $_SESSION['UserID'];
+            <?php 
+            if(isset($_SESSION['UserID'])){$uid = $_SESSION['UserID'];
                 if($uid === $admin['UserID']) { ?>
                     <form action="details.php" method="POST">
                     <input type="hidden" name="id_to_delete" value="<?php echo $event['EventID']; ?>">
                     <input type="hidden" name="LocIDDel" value="<?php echo $event['LocID']; ?>">
-                    <input type="submit" name="delete" value="Delete" class="btn brand z-depth-0">
+                    <input type="submit" name="delete" onclick="return confirm('Are you sure?')" value="Delete" class="btn brand z-depth-0">
                     </form>
-                <?php }?>
+                <?php }}?>
+            
+            <?php if(isset($_SESSION['UserID'])){ ?>
+                <div class="card-action right-align">
+                    <a class="btn" href="comments.php?evID=<?php echo $id ?>">Create Comment</a>
+                </div>
+            <?php } ?>
 
             <div class="row">
                 <?php foreach($com as $c){ ?>
@@ -142,6 +160,14 @@
                                         <li><?php echo htmlspecialchars($c['rating']); ?></li>
                                 </ul>
                             </div>
+                            <?php if(isset($_SESSION['UserID'])){ ?>
+                                <?php if($c['UserID'] == $_SESSION['UserID']){ ?>
+                                    <div class="card-action right-align">
+                                        <a class="btn" href="comments.php?evID=<?php echo $id ?>&comID=YES">Edit</a>
+                                    </div>
+                                <?php } ?>
+                            <?php } ?>
+
                         </div>
                     </div>
                 <?php } ?>

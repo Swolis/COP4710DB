@@ -18,7 +18,7 @@
         //rso events
         $UserID = mysqli_real_escape_string($conn, $_SESSION['UserID']);
 
-        $sql = "SELECT EventID, eventTime, dat, description FROM events A INNER JOIN rso_users B ON A.RsoID = B.rsoID WHERE '$UserID' = userID AND rso_exclusive = '1'";
+        $sql = "SELECT DISTINCT(EventID), eventTime, dat, description FROM events A INNER JOIN rso_users B ON A.RsoID = B.rsoID WHERE '$UserID' = userID AND rso_exclusive = '1'";
         $result = mysqli_query($conn, $sql);
         $rsoevs = mysqli_fetch_all($result, MYSQLI_ASSOC);
     }

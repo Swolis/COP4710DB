@@ -7,6 +7,84 @@
 
     $result = mysqli_query($conn, $sql);
 
+    if(isset($_POST['delete']))
+    {
+        //get all rso events
+        $UserID = mysqli_real_escape_string($conn, $_SESSION['UserID']);
+        $RsoDel = mysqli_real_escape_string($conn, $_POST['rsoDel']);
+        $sql = "SELECT * FROM events WHERE RsoID = '$RsoDel' AND rso_exclusive = '1'";
+        $result = mysqli_query($conn, $sql);
+        $rsoevs = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+        //foreach event, check if location is the last one
+        foreach($rsoevs as $rd)
+        {
+            // check how many events share loc
+            $LocIDDel = mysqli_real_escape_string($conn, $rd['LocID']);
+            $sql = "SELECT * FROM events WHERE LocID = '$LocIDDel'";
+            $result = mysqli_query($conn, $sql);
+            $first = mysqli_num_rows($result);
+
+            //check if univ use loc
+            $sql = "SELECT * FROM universities WHERE LocID = '$LocIDDel'";
+            $result = mysqli_query($conn, $sql);
+            $second = mysqli_num_rows($result);
+
+            //delete comments
+            //get number of comments
+            $id = mysqli_real_escape_string($conn, $rd['EventID']);
+            $sql = "DELETE FROM comments WHERE EventID = '$id'";
+            if(mysqli_query($conn, $sql))
+            {
+                //success
+            }
+            else
+            {
+                echo 'query error: '. mysqli_error($conn);
+            }
+
+            $sql = "DELETE FROM events WHERE EventID = '$id'";
+
+            if(mysqli_query($conn, $sql))
+            {
+                if($first === 1 && $second ===0)
+                {
+                    $sql = "DELETE FROM locations WHERE LocID = '$LocIDDel'";
+                    if(!mysqli_query($conn, $sql))
+                    {
+                        echo 'query error: '. mysqli_error($conn);
+                    }
+                }
+            } else {
+                echo 'query error: '. mysqli_error($conn);
+            }
+        }
+
+        //delete rso_user entries
+
+        $sql = "DELETE FROM rso_users WHERE rsoID = '$RsoDel'";
+        if(mysqli_query($conn, $sql))
+        {
+            //success
+        } 
+        else 
+        {
+            echo 'query error: '. mysqli_error($conn);
+        }
+
+        //delete rso
+        $sql = "DELETE FROM rso WHERE rsoID = '$RsoDel'";
+        if(mysqli_query($conn, $sql))
+        {
+            header('Location: my_rso.php');
+        } 
+        else 
+        {
+            echo 'query error: '. mysqli_error($conn);
+        }
+
+    }
+
     if(mysqli_num_rows($result) === 0)
     {
         header('Location: rso_join.php');
@@ -82,6 +160,12 @@
                         <div class="card z-depth-0">
                             <div class="card-content center">
                                 <h6><?php echo htmlspecialchars($r['rsoName']); ?></h6>
+                                <?php if($_SESSION['UserID'] === $r['adminID']){?>
+                                    <form action="my_rso.php" method="POST">
+                                        <input type="submit" onclick="return confirm('Are you sure?')" name="delete" value="Delete" class="btn brand z-depth-0">
+                                        <input type="hidden" name="rsoDel" value="<?php echo $r['RsoID']?>">
+                                    </form>
+                                <?php }?>
                                 <div class="card-action right-align">
                                     <a class="brand-text" href="my_rso.php?id=<?php echo $r['RsoID']; ?>">Leave Rso</a>
                                 </div>
