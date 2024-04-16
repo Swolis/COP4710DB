@@ -73,15 +73,30 @@
         }
 
         //delete rso
-        $sql = "DELETE FROM rso WHERE rsoID = '$RsoDel'";
+        $sql = "DELETE FROM rso WHERE RsoID = '$RsoDel'";
         if(mysqli_query($conn, $sql))
         {
-            header('Location: my_rso.php');
         } 
         else 
         {
             echo 'query error: '. mysqli_error($conn);
         }
+
+        //check if still an admin
+        $sql = "SELECT COUNT(*) FROM rso WHERE adminID = '$UserID'";
+        $result = mysqli_query($conn, $sql);
+        if($result === 0)
+        {
+            $sql = "UPDATE users set isAdmin='0' WHERE UserID = '$UserID'";
+            if(mysqli_query($conn, $sql))
+            {
+            } 
+            else 
+            {
+                echo 'query error: '. mysqli_error($conn);
+            }
+        }
+        header('Location: my_rso.php');
 
     }
 

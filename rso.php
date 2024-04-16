@@ -64,7 +64,7 @@
             {
                 $temp = mysqli_real_escape_string($conn, $m);
 
-                $sql = "SELECT UserID FROM users WHERE email = '$temp' and UnivID = '$tempuni'";
+                $sql = "SELECT * FROM users WHERE email = '$temp' and UnivID = '$tempuni'";
                 $result = mysqli_query($conn, $sql);
 
                 if(mysqli_num_rows($result) === 1)
@@ -113,7 +113,7 @@
             {
                 $userID_ = mysqli_real_escape_string($conn, $mi);
 
-                $sql = "INSERT INTO rso_users(rsoID, userID) VALUES('$rsoID', '$adminID')";
+                $sql = "INSERT INTO rso_users(rsoID, userID) VALUES('$rsoID', '$userID_')";
 
                 if(!mysqli_query($conn, $sql))
                 {
@@ -125,7 +125,7 @@
                     $counter++;
                 }
             }
-            $sql = "INSERT INTO rso_users(rsoID, userID) VALUES('$rsoID', '$userID_')";
+            $sql = "INSERT INTO rso_users(rsoID, userID) VALUES('$rsoID', '$adminID')";
 
             if(!mysqli_query($conn, $sql))
             {

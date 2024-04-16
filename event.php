@@ -2,7 +2,14 @@
     session_start();
     include('config/db_connect.php');
 
-    $UserID = htmlspecialchars($_SESSION['UserID']);
+    if(isset($_SESSION['saID']))
+    {
+        $UserID = htmlspecialchars($_SESSION['saID']);
+    }
+    else
+    {
+        $UserID = htmlspecialchars($_SESSION['UserID']);
+    }
 
     $sql = "SELECT * FROM rso WHERE adminID = '$UserID'";
 

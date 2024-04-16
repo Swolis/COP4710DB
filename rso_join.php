@@ -2,8 +2,9 @@
     session_start();
     include('config/db_connect.php');
 
+    $UserID = $_SESSION['UserID'];
     $user_univ = $_SESSION['UnivID'];
-    $sql = "SELECT * FROM rso WHERE univID = '$user_univ'";
+    $sql = "SELECT DISTINCT(A.RsoID), rsoName FROM rso A INNER JOIN rso_users B ON A.RsoID = B.rsoID WHERE univID = '$user_univ' AND userID != '$UserID'";
 
     $result = mysqli_query($conn, $sql);
 

@@ -28,13 +28,13 @@
             <ul id="nav-mobile" class="right hide-on-small-and-down">
                 <?php if(isset($_SESSION['UserID'])){?>
                     <li><a href="rso.php" class="btn brand z-depth-0">Create RSO</a></li>
-                    <?php if($_SESSION['isAdmin']){?>
+                    <?php if($_SESSION['isAdmin']==='1'){?>
                         <li><a href="event.php" class="btn brand z-depth-0">Create Event</a></li>
                     <?php } ?>
                     <li><a href="rso_join.php" class="btn brand z-depth-0">Join RSO</a></li>
                     <li><a href="my_rso.php" class="btn brand z-depth-0">My RSOs</a></li>
                 <?php } else if(isset($_SESSION['saID'])){?>
-                    <li><a href="eventsa.php" class="btn brand z-depth-0">Create Event</a></li>
+                    <li><a href="event.php" class="btn brand z-depth-0">Create Event</a></li>
                 <?php } ?>
                 <li><a href="logout.php" class="btn brand z-depth-0">Logout</a></li>
             </ul>

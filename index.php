@@ -7,7 +7,13 @@
 	$result = mysqli_query($conn, $sql);
 	$publics = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-    if(isset($_SESSION['UserID']))
+    if(isset($_SESSION['saID']))
+    {
+        $sql = "SELECT EventID, eventTime, dat, description FROM events";
+        $result = mysqli_query($conn, $sql);
+        $privates = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    }
+    else if(isset($_SESSION['UserID']))
     {
         //private events
         $UnivID = mysqli_real_escape_string($conn, $_SESSION['UnivID']);
