@@ -118,7 +118,7 @@
 
             //insert locations
 
-            $sql = "SELECT * FROM locations WHERE latitude = $latitude AND longitude = $longitude" ; 
+            $sql = "SELECT * FROM locations WHERE latitude = '$latitude' AND longitude = '$longitude'" ; 
             $result = mysqli_query($conn, $sql);
 
             // If we do not have this combination of latitude and longitude

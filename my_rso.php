@@ -180,10 +180,11 @@
                                         <input type="submit" onclick="return confirm('Are you sure?')" name="delete" value="Delete" class="btn brand z-depth-0">
                                         <input type="hidden" name="rsoDel" value="<?php echo $r['RsoID']?>">
                                     </form>
-                                <?php }?>
-                                <div class="card-action right-align">
-                                    <a class="brand-text" href="my_rso.php?id=<?php echo $r['RsoID']; ?>">Leave Rso</a>
-                                </div>
+                                <?php } else {?>
+                                    <div class="card-action right-align">
+                                        <a class="brand-text" href="my_rso.php?id=<?php echo $r['RsoID']; ?>">Leave Rso</a>
+                                    </div>
+                                <?php } ?>
                             </div>
                         </div>
                     </div>

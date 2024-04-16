@@ -4,7 +4,7 @@
 
     $UserID = $_SESSION['UserID'];
     $user_univ = $_SESSION['UnivID'];
-    $sql = "SELECT DISTINCT(A.RsoID), rsoName FROM rso A INNER JOIN rso_users B ON A.RsoID = B.rsoID WHERE univID = '$user_univ' AND userID != '$UserID'";
+    $sql = "SELECT * FROM rso A WHERE univID = '$user_univ'";
 
     $result = mysqli_query($conn, $sql);
 

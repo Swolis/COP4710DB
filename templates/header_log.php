@@ -28,7 +28,7 @@
             <ul id="nav-mobile" class="right hide-on-small-and-down">
                 <?php if(isset($_SESSION['UserID'])){?>
                     <li><a href="rso.php" class="btn brand z-depth-0">Create RSO</a></li>
-                    <?php if($_SESSION['isAdmin']==='1'){?>
+                    <?php if($_SESSION['isAdmin']=='1'){?>
                         <li><a href="event.php" class="btn brand z-depth-0">Create Event</a></li>
                     <?php } ?>
                     <li><a href="rso_join.php" class="btn brand z-depth-0">Join RSO</a></li>
